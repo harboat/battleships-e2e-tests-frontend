@@ -8,8 +8,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 
 @Test
 public class MenuTest {
@@ -87,8 +86,7 @@ public class MenuTest {
         // given
 
         // when
-        battleships.createGame(playerOne);
-        var roomId = playerOne.findElement(By.id("roomId")).getText();
+        var roomId = battleships.createGame(playerOne);
         // then
         assertNotNull(roomId);
     }
@@ -96,8 +94,7 @@ public class MenuTest {
     @Test(groups = {"twoPlayers"}, description = "Player Two can join the game")
     public void playerTwoCanJoinGame() {
         // given
-        battleships.createGame(playerOne);
-        var roomId = playerOne.findElement(By.id("roomId")).getText();
+        var roomId = battleships.createGame(playerOne);
         // when
         battleships.joinGame(roomId, playerTwo);
         var joinedRoomId = playerTwo.findElement(By.id("roomId")).getText();
