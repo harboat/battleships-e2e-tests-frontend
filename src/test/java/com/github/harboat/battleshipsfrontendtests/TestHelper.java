@@ -1,9 +1,12 @@
 package com.github.harboat.battleshipsfrontendtests;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -66,6 +69,34 @@ class TestHelper {
 
     void playerReady(ChromeDriver driver) {
         driver.findElement(By.id("readyButton")).click();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
     }
+
+    boolean shoot(ChromeDriver driver, String cellId) {
+        var cell = driver.findElement(By.id(cellId + ":enemy"));
+        cell.click();
+        return fluentWait(driver).until(ExpectedConditions.or(
+                ExpectedConditions.
+                        attributeContains(By.id(cellId + ":enemy"), "class", "cell cellHit"),
+                ExpectedConditions.
+                        attributeContains(By.id(cellId + ":enemy"), "class", "cell shipHit")));
+    }
+
+    boolean checkIfPlayerStarts(ChromeDriver driver) {
+        var turn = fluentWait(driver).until(ExpectedConditions.presenceOfElementLocated(By.id("turn"))).getText();
+        return turn.equals("YOUR TURN");
+    }
+
+    FluentWait<WebDriver> fluentWait(ChromeDriver driver) {
+        return new FluentWait<WebDriver>(driver)
+                .withTimeout(Duration.ofSeconds(15))
+                .pollingEvery(Duration.ofSeconds(1))
+                .ignoring(NoSuchElementException.class);
+    }
+
+    void forfeit(ChromeDriver driver) {
+        var forfeitButton = fluentWait(driver).
+                until(ExpectedConditions.presenceOfElementLocated(By.id("forfeitButton")));
+        forfeitButton.click();
+    }
+
 }

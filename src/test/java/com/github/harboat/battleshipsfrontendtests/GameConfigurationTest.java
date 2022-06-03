@@ -2,16 +2,11 @@ package com.github.harboat.battleshipsfrontendtests;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.time.Duration;
 
 import static org.testng.Assert.*;
 
@@ -90,8 +85,8 @@ public class GameConfigurationTest {
         battleships.playerReady(playerTwo);
         // when
         battleships.startGame(playerOne);
-        var fluentWait = fluentWait(playerOne);
-        var turnElement = fluentWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("turn")));
+        var turnElement = battleships.fluentWait(playerOne)
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id("turn")));
         // then
         assertNotNull(turnElement);
     }
@@ -105,18 +100,12 @@ public class GameConfigurationTest {
         battleships.generateFleet(playerTwo);
         // when
         battleships.playerReady(playerTwo);
-        var fluentWait = fluentWait(playerTwo);
-        var buttonColorIsGreen = fluentWait.until(ExpectedConditions.attributeContains(By.id("readyButton"),
-                "style", "background-color: rgb(163, 190, 140); border-color: rgb(163, 190, 140);"));
+        var buttonColorIsGreen = battleships.fluentWait(playerTwo)
+                .until(ExpectedConditions.attributeContains(By.id("readyButton"),
+                        "style",
+                        "background-color: rgb(163, 190, 140); border-color: rgb(163, 190, 140);"));
         // then
         assertTrue(buttonColorIsGreen);
-    }
-
-    private FluentWait<WebDriver> fluentWait(ChromeDriver driver) {
-        return new FluentWait<WebDriver>(driver)
-                .withTimeout(Duration.ofSeconds(15))
-                .pollingEvery(Duration.ofSeconds(1))
-                .ignoring(NoSuchElementException.class);
     }
 
 }
